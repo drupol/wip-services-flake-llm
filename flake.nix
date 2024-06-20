@@ -12,9 +12,12 @@
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {
       systems = import inputs.systems;
 
-      imports = [ inputs.process-compose-flake.flakeModule ];
-
-      flake.processComposeModules.default = ./services;
+      imports = [
+        inputs.process-compose-flake.flakeModule
+        ./imports/lib.nix
+        ./imports/services.nix
+        ./imports/formatter.nix
+      ];
 
       perSystem =
         {
@@ -29,7 +32,7 @@
           process-compose."services-flake-llm" = pc: {
             imports = [
               inputs.services-flake.processComposeModules.default
-              (import ./services { inherit inputs; })
+              inputs.self.processComposeModules.default
             ];
 
             services = {
