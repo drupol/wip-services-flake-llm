@@ -1,7 +1,5 @@
 { inputs, ... }:
-let
-  inherit (inputs.services-flake.lib) multiService;
-in
+
 {
-  imports = builtins.map multiService [ ./searxng.nix ];
+  imports = builtins.map inputs.services-flake.lib.multiService [ ./searxng.nix ];
 }

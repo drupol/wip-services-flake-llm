@@ -41,7 +41,7 @@ in
     };
 
     settings = lib.mkOption {
-      types = yamlFormat.type;
+      type = yamlFormat.type;
       default = {
         server.secret_key = "secret";
         server.limiter = false;

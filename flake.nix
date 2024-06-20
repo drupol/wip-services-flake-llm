@@ -24,7 +24,7 @@
           process-compose."services-flake-llm" = pc: {
             imports = [
               inputs.services-flake.processComposeModules.default
-              inputs.self.processComposeModules.default
+              (import ./services { inherit inputs; })
             ];
 
             services = {
