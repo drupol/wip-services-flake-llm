@@ -48,13 +48,16 @@
                 enable = true;
                 environment =
                   let
-                    inherit (pc.config.services.ollama.ollama1) host port;
+                    ollamaHost = pc.config.services.ollama.ollama1.host;
+                    ollamaPort = pc.config.services.ollama.ollama1.port;
+                    searxngHost = pc.config.services.searxng.searxng1.host;
+                    searxngPort = pc.config.services.searxng.searxng1.port;
                   in
                   {
                     WEBUI_AUTH = "False";
                     ENABLE_OLLAMA_API = "True";
-                    OLLAMA_BASE_URL = "http://${host}:${toString port}";
-                    OLLAMA_API_BASE_URL = "http://${host}:${toString port}/api";
+                    OLLAMA_BASE_URL = "http://${ollamaHost}:${toString ollamaPort}";
+                    OLLAMA_API_BASE_URL = "http://${ollamaHost}:${toString ollamaPort}/api";
                     DEVICE_TYPE = "cpu";
                     ENABLE_RAG_HYBRID_SEARCH = "True";
                     ENABLE_RAG_WEB_SEARCH = "True";
@@ -64,13 +67,13 @@
                     RAG_EMBEDDING_MODEL_AUTO_UPDATE = "True";
                     RAG_RERANKING_MODEL_AUTO_UPDATE = "True";
                     RAG_WEB_SEARCH_ENGINE = "searxng";
-                    SEARXNG_QUERY_URL = "http://127.0.0.1:8080/searx/search?q=<query>";
-                    RAG_WEB_SEARCH_RESULT_COUNT = "5";
+                    SEARXNG_QUERY_URL = "http://${searxngHost}:${toString searxngPort}/search?q=<query>";
+                    RAG_WEB_SEARCH_RESULT_COUNT = "10";
                   };
               };
             };
 
-            settings.processes.open-browser = {
+            settings.processes.open-browser-open-webui = {
               command =
                 let
                   inherit (pc.config.services.open-webui.open-webui1) host port;
@@ -80,6 +83,18 @@
                 "${opener} ${url}";
               depends_on.open-webui1.condition = "process_healthy";
             };
+
+            settings.processes.open-browser-searxng = {
+              command =
+                let
+                  inherit (pc.config.services.searxng.searxng1) host port;
+                  opener = if pkgs.stdenv.isDarwin then "open" else lib.getExe' pkgs.xdg-utils "xdg-open";
+                  url = "http://${host}:${toString port}";
+                in
+                "${opener} ${url}";
+              depends_on.searxng1.condition = "process_healthy";
+            };
+
           };
         };
     };
