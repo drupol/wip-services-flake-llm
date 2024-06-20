@@ -17,7 +17,12 @@
       flake.processComposeModules.default = ./services;
 
       perSystem =
-        { self', ... }:
+        {
+          self',
+          pkgs,
+          lib,
+          ...
+        }:
         {
           packages.default = self'.packages.services-flake-llm;
 
@@ -43,19 +48,34 @@
                     inherit (pc.config.services.ollama.ollama1) host port;
                   in
                   {
-                    OLLAMA_API_BASE_URL = "http://${host}:${toString port}/api";
                     WEBUI_AUTH = "False";
-                    # If `RAG_EMBEDDING_ENGINE != "ollama"` Open WebUI will use
-                    # [sentence-transformers](https://pypi.org/project/sentence-transformers/) to fetch the embedding models,
-                    # which would require `DEVICE_TYPE` to choose the device that performs the embedding.
-                    # If we rely on ollama instead, we can make use of [already documented configuration to use GPU acceleration](https://community.flake.parts/services-flake/ollama#acceleration).
+                    ENABLE_OLLAMA_API = "True";
+                    OLLAMA_BASE_URL = "http://${host}:${toString port}";
+                    OLLAMA_API_BASE_URL = "http://${host}:${toString port}/api";
+                    DEVICE_TYPE = "cpu";
+                    ENABLE_RAG_HYBRID_SEARCH = "True";
+                    ENABLE_RAG_WEB_SEARCH = "True";
+                    ENABLE_RAG_WEB_LOADER_SSL_VERIFICATION = "False";
                     RAG_EMBEDDING_ENGINE = "ollama";
                     RAG_EMBEDDING_MODEL = "mxbai-embed-large:latest";
                     RAG_EMBEDDING_MODEL_AUTO_UPDATE = "True";
                     RAG_RERANKING_MODEL_AUTO_UPDATE = "True";
-                    DEVICE_TYPE = "cpu";
+                    RAG_WEB_SEARCH_ENGINE = "searxng";
+                    SEARXNG_QUERY_URL = "http://127.0.0.1:8080/searx/search?q=<query>";
+                    RAG_WEB_SEARCH_RESULT_COUNT = "5";
                   };
               };
+            };
+
+            settings.processes.open-browser = {
+              command =
+                let
+                  inherit (pc.config.services.open-webui.open-webui1) host port;
+                  opener = if pkgs.stdenv.isDarwin then "open" else lib.getExe' pkgs.xdg-utils "xdg-open";
+                  url = "http://${host}:${toString port}";
+                in
+                "${opener} ${url}";
+              depends_on.open-webui1.condition = "process_healthy";
             };
           };
         };
