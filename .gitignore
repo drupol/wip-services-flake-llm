@@ -1,3 +1,5 @@
 .webui_secret_key
 /data/
 ./flake.lock
+/result/
+/result

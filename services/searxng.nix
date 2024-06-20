@@ -8,20 +8,6 @@
 let
   inherit (lib) types;
   yamlFormat = pkgs.formats.yaml { };
-
-  settingType =
-    with types;
-    (oneOf [
-      bool
-      int
-      float
-      str
-      (listOf settingType)
-      (attrsOf settingType)
-    ])
-    // {
-      description = "JSON value";
-    };
 in
 {
   options = {
@@ -66,14 +52,12 @@ in
         processes = {
           "${name}" = {
             environment = {
-              SEARXNG_SETTINGS_PATH = "${pkgs.writeText "settings.yml" (
-                builtins.toJSON (
-                  lib.recursiveUpdate config.settings {
-                    use_default_settings = true;
-                    server.bind_address = config.host;
-                    server.port = config.port;
-                  }
-                )
+              SEARXNG_SETTINGS_PATH = "${yamlFormat.generate "settings.yaml" (
+                lib.recursiveUpdate config.settings {
+                  use_default_settings = true;
+                  server.bind_address = config.host;
+                  server.port = config.port;
+                }
               )}";
             };
             command = lib.getExe config.package;
