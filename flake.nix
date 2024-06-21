@@ -1,6 +1,6 @@
 {
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
     systems.url = "github:nix-systems/default";
     process-compose-flake.url = "github:Platonic-Systems/process-compose-flake";
@@ -70,6 +70,17 @@
                     SEARXNG_QUERY_URL = "http://${searxngHost}:${toString searxngPort}/search?q=<query>";
                     RAG_WEB_SEARCH_RESULT_COUNT = "10";
                   };
+              };
+
+              hello = {
+                hello1 = {
+                  enable = true;
+                  message = "Hello, world!";
+                };
+                hello2 = {
+                  enable = true;
+                  message = "Hello, Nix!";
+                };
               };
             };
 
