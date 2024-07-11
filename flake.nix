@@ -14,30 +14,24 @@
 
       imports = [
         inputs.process-compose-flake.flakeModule
-        ./imports/lib.nix
-        ./imports/services.nix
-        ./imports/formatter.nix
       ];
 
       perSystem =
         {
-          self',
           pkgs,
           lib,
           ...
         }:
         {
-          packages.default = self'.packages.services-flake-llm;
-
-          process-compose."services-flake-llm" = pc: {
+          process-compose."default" = pc: {
             imports = [
               inputs.services-flake.processComposeModules.default
-              inputs.self.processComposeModules.default
             ];
 
             services = {
               ollama."ollama1" = {
                 enable = true;
+                models = [ "phi3" ];
               };
 
               searxng.searxng1 = {
@@ -70,17 +64,6 @@
                     SEARXNG_QUERY_URL = "http://${searxngHost}:${toString searxngPort}/search?q=<query>";
                     RAG_WEB_SEARCH_RESULT_COUNT = "10";
                   };
-              };
-
-              hello = {
-                hello1 = {
-                  enable = true;
-                  message = "Hello, world!";
-                };
-                hello2 = {
-                  enable = true;
-                  message = "Hello, Nix!";
-                };
               };
             };
 
