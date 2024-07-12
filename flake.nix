@@ -31,10 +31,11 @@
           packages.default = self'.packages.services-flake-llm;
 
           process-compose."services-flake-llm" = pc: {
-            imports = [
-              inputs.services-flake.processComposeModules.default
-              inputs.self.processComposeModules.default
-            ];
+            imports =
+              [
+                inputs.services-flake.processComposeModules.default
+                ./services/tika.nix
+              ];
 
             services = {
               ollama."ollama1" = {

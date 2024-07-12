@@ -10,7 +10,6 @@ let
 in
 {
   options = {
-    enable = lib.mkEnableOption "Enable ${name} service";
     package = lib.mkPackageOption pkgs "tika" { };
 
     host = lib.mkOption {
