@@ -44,6 +44,7 @@
 
               tika."tika1" = {
                 enable = true;
+                package = pkgs.master.tika;
               };
 
               searxng.searxng1 = {
@@ -52,12 +53,15 @@
 
               open-webui."open-webui1" = {
                 enable = true;
+                package = pkgs.master.open-webui;
                 environment =
                   let
                     ollamaHost = pc.config.services.ollama.ollama1.host;
                     ollamaPort = pc.config.services.ollama.ollama1.port;
                     searxngHost = pc.config.services.searxng.searxng1.host;
                     searxngPort = pc.config.services.searxng.searxng1.port;
+                    tikaHost = pc.config.services.tika.searxng1.host;
+                    tikaPort = pc.config.services.tika.searxng1.port;
                   in
                   {
                     WEBUI_AUTH = "False";
@@ -75,6 +79,8 @@
                     RAG_WEB_SEARCH_ENGINE = "searxng";
                     SEARXNG_QUERY_URL = "http://${searxngHost}:${toString searxngPort}/search?q=<query>";
                     RAG_WEB_SEARCH_RESULT_COUNT = "10";
+                    CONTENT_EXTRACTION_ENGINE = "tika";
+                    TIKA_SERVER_URL = "http://${tikaHost}:${toString tikaPort}/";
                   };
               };
             };
