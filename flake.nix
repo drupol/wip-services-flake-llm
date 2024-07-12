@@ -60,8 +60,8 @@
                     ollamaPort = pc.config.services.ollama.ollama1.port;
                     searxngHost = pc.config.services.searxng.searxng1.host;
                     searxngPort = pc.config.services.searxng.searxng1.port;
-                    tikaHost = pc.config.services.tika.searxng1.host;
-                    tikaPort = pc.config.services.tika.searxng1.port;
+                    tikaHost = pc.config.services.tika.tika1.host;
+                    tikaPort = pc.config.services.tika.tika1.port;
                   in
                   {
                     WEBUI_AUTH = "False";
