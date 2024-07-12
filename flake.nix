@@ -1,6 +1,7 @@
 {
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs-master.url = "github:nixos/nixpkgs/master";
     flake-parts.url = "github:hercules-ci/flake-parts";
     systems.url = "github:nix-systems/default";
     process-compose-flake.url = "github:Platonic-Systems/process-compose-flake";
@@ -14,24 +15,36 @@
 
       imports = [
         inputs.process-compose-flake.flakeModule
+        ./imports/lib.nix
+        ./imports/services.nix
+        ./imports/overlay.nix
       ];
 
       perSystem =
         {
+          self',
           pkgs,
           lib,
           ...
         }:
         {
-          process-compose."default" = pc: {
-            imports = [
-              inputs.services-flake.processComposeModules.default
-            ];
+          packages.default = self'.packages.services-flake-llm;
+
+          process-compose."services-flake-llm" = pc: {
+            imports =
+              [
+                inputs.services-flake.processComposeModules.default
+                inputs.self.processComposeModules.default
+              ];
 
             services = {
               ollama."ollama1" = {
                 enable = true;
-                models = [ "phi3" ];
+              };
+
+              tika."tika1" = {
+                enable = true;
+                package = pkgs.master.tika;
               };
 
               searxng.searxng1 = {
@@ -40,12 +53,15 @@
 
               open-webui."open-webui1" = {
                 enable = true;
+                package = pkgs.master.open-webui;
                 environment =
                   let
                     ollamaHost = pc.config.services.ollama.ollama1.host;
                     ollamaPort = pc.config.services.ollama.ollama1.port;
                     searxngHost = pc.config.services.searxng.searxng1.host;
                     searxngPort = pc.config.services.searxng.searxng1.port;
+                    tikaHost = pc.config.services.tika.tika1.host;
+                    tikaPort = pc.config.services.tika.tika1.port;
                   in
                   {
                     WEBUI_AUTH = "False";
@@ -63,32 +79,11 @@
                     RAG_WEB_SEARCH_ENGINE = "searxng";
                     SEARXNG_QUERY_URL = "http://${searxngHost}:${toString searxngPort}/search?q=<query>";
                     RAG_WEB_SEARCH_RESULT_COUNT = "10";
+                    CONTENT_EXTRACTION_ENGINE = "tika";
+                    TIKA_SERVER_URL = "http://${tikaHost}:${toString tikaPort}/";
                   };
               };
             };
-
-            settings.processes.open-browser-open-webui = {
-              command =
-                let
-                  inherit (pc.config.services.open-webui.open-webui1) host port;
-                  opener = if pkgs.stdenv.isDarwin then "open" else lib.getExe' pkgs.xdg-utils "xdg-open";
-                  url = "http://${host}:${toString port}";
-                in
-                "${opener} ${url}";
-              depends_on.open-webui1.condition = "process_healthy";
-            };
-
-            settings.processes.open-browser-searxng = {
-              command =
-                let
-                  inherit (pc.config.services.searxng.searxng1) host port;
-                  opener = if pkgs.stdenv.isDarwin then "open" else lib.getExe' pkgs.xdg-utils "xdg-open";
-                  url = "http://${host}:${toString port}";
-                in
-                "${opener} ${url}";
-              depends_on.searxng1.condition = "process_healthy";
-            };
-
           };
         };
     };
