@@ -1,6 +1,7 @@
 {
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs-master.url = "github:nixos/nixpkgs/master";
     flake-parts.url = "github:hercules-ci/flake-parts";
     systems.url = "github:nix-systems/default";
     process-compose-flake.url = "github:Platonic-Systems/process-compose-flake";
@@ -14,24 +15,34 @@
 
       imports = [
         inputs.process-compose-flake.flakeModule
+        ./imports/lib.nix
+        ./imports/services.nix
+        ./imports/overlay.nix
       ];
 
       perSystem =
         {
+          self',
           pkgs,
           lib,
           ...
         }:
         {
-          process-compose."default" = pc: {
+          packages.default = self'.packages.services-flake-llm;
+
+          process-compose."services-flake-llm" = pc: {
             imports = [
               inputs.services-flake.processComposeModules.default
+              inputs.self.processComposeModules.default
             ];
 
             services = {
               ollama."ollama1" = {
                 enable = true;
-                models = [ "phi3" ];
+              };
+
+              tika."tika1" = {
+                enable = true;
               };
 
               searxng.searxng1 = {
