@@ -31,11 +31,10 @@
           packages.default = self'.packages.services-flake-llm;
 
           process-compose."services-flake-llm" = pc: {
-            imports =
-              [
-                inputs.services-flake.processComposeModules.default
-                inputs.self.processComposeModules.default
-              ];
+            imports = [
+              inputs.services-flake.processComposeModules.default
+              inputs.self.processComposeModules.default
+            ];
 
             services = {
               ollama."ollama1" = {
@@ -49,6 +48,12 @@
 
               searxng.searxng1 = {
                 enable = true;
+                settings = {
+                  search.formats = [
+                    "html"
+                    "json"
+                  ];
+                };
               };
 
               open-webui."open-webui1" = {
@@ -81,6 +86,7 @@
                     RAG_WEB_SEARCH_RESULT_COUNT = "10";
                     CONTENT_EXTRACTION_ENGINE = "tika";
                     TIKA_SERVER_URL = "http://${tikaHost}:${toString tikaPort}/";
+                    OPENBLAS_CORETYPE = "HASWELL";
                   };
               };
             };
