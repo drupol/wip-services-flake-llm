@@ -86,7 +86,6 @@
                     RAG_WEB_SEARCH_RESULT_COUNT = "10";
                     CONTENT_EXTRACTION_ENGINE = "tika";
                     TIKA_SERVER_URL = "http://${tikaHost}:${toString tikaPort}/";
-                    OPENBLAS_CORETYPE = "HASWELL";
                   };
               };
             };
