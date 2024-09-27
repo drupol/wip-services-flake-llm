@@ -24,7 +24,6 @@
         {
           self',
           pkgs,
-          lib,
           ...
         }:
         {
@@ -57,6 +56,7 @@
 
               open-webui."open-webui1" = {
                 enable = true;
+                package = pkgs.master.open-webui;
                 environment =
                   let
                     ollamaHost = pc.config.services.ollama.ollama1.host;
