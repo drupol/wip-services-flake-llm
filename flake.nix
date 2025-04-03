@@ -36,6 +36,12 @@
             ];
 
             services = {
+              docling-serve."docling-serve1" = {
+                enable = true;
+                port = 5001;
+                package = pkgs.master.docling-serve.override { withUI = true; };
+              };
+
               ollama."ollama1" = {
                 enable = true;
               };
