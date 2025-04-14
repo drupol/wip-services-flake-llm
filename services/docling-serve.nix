@@ -43,6 +43,7 @@ in
               http_get = {
                 host = config.host;
                 port = config.port;
+                path = "/ui";
               };
               initial_delay_seconds = 2;
               period_seconds = 10;
