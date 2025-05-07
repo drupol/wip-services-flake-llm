@@ -14,7 +14,7 @@ in
 
     host = lib.mkOption {
       description = "Docling Serve bind address";
-      default = "127.0.0.1";
+      default = "localhost";
       example = "0.0.0.0";
       type = types.str;
     };
