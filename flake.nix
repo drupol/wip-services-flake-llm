@@ -39,7 +39,7 @@
               docling-serve."docling-serve1" = {
                 enable = true;
                 port = 5001;
-                package = pkgs.master.docling-serve.override { withUI = true; };
+                package = pkgs.docling-serve.override { withUI = true; };
               };
 
               ollama."ollama1" = {
@@ -62,7 +62,7 @@
 
               open-webui."open-webui1" = {
                 enable = true;
-                package = pkgs.master.open-webui;
+                package = pkgs.open-webui;
                 environment =
                   let
                     ollamaHost = pc.config.services.ollama.ollama1.host;
