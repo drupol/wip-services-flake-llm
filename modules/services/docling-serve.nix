@@ -7,7 +7,6 @@
   imports = [ inputs.process-compose-flake.flakeModule ];
   perSystem =
     {
-      self',
       pkgs,
       ...
     }:
