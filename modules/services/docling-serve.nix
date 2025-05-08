@@ -18,7 +18,7 @@
           (inputs.services-flake.lib.multiService config.flake.processComposeModules.docling-serve)
         ];
 
-        services.docling-serve."instance" = {
+        services.docling-serve.instance1 = {
           enable = true;
           port = 5001;
           package = pkgs.master.docling-serve.override {

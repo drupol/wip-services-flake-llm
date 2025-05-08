@@ -1,21 +1,17 @@
 {
   name,
+  config,
+  pkgs,
+  lib,
   ...
 }:
 {
   flake.processComposeModules.docling-serve =
-    {
-      config,
-      pkgs,
-      lib,
-      ...
-    }:
     let
       inherit (lib) types;
-      cfg = config.services.docling-serve;
     in
     {
-      options.services.docling-serve = {
+      options = {
         enable = lib.mkEnableOption "Enable docling-serve";
         package = lib.mkPackageOption pkgs "docling-serve" { };
 
@@ -39,19 +35,19 @@
         };
       };
 
-      config.outputs.settings.processes."${name}" = {
-        command = "${lib.getExe cfg.package} run --host ${cfg.host} --port ${toString cfg.port}";
+      config.outputs.settings.processes.${name} = {
+        command = "${lib.getExe config.package} run --host ${config.host} --port ${toString config.port}";
         environment = {
-          HF_HOME = "${cfg.dataDir}";
-          EASYOCR_MODULE_PATH = "${cfg.dataDir}";
-          MPLCONFIGDIR = "${cfg.dataDir}";
+          HF_HOME = "${config.dataDir}";
+          EASYOCR_MODULE_PATH = "${config.dataDir}";
+          MPLCONFIGDIR = "${config.dataDir}";
           DOCLING_SERVE_ENABLE_UI = "true";
         };
         availability.restart = "on_failure";
         readiness_probe = {
           http_get = {
-            host = cfg.host;
-            port = cfg.port;
+            host = config.host;
+            port = config.port;
             path = "/ui";
           };
           initial_delay_seconds = 2;
