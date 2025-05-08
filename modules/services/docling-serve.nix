@@ -4,6 +4,7 @@
   ...
 }:
 {
+  imports = [ inputs.process-compose-flake.flakeModule ];
   perSystem =
     {
       self',
@@ -11,26 +12,23 @@
       ...
     }:
     {
-      packages.default = self'.packages.ai-services;
-
       process-compose."ai-services" = pc: {
         imports = [
           inputs.services-flake.processComposeModules.default
-          config.flake.processComposeModules.default
+          config.flake.processComposeModules.docling-serve
         ];
 
         services = {
-          # TODO: Make this work
-          # docling-serve."docling-serve1" = {
-          #   enable = true;
-          #   port = 5001;
-          #   package = pkgs.master.docling-serve.override {
-          #     withUI = true;
-          #     withTesserocr = true;
-          #     withCPU = true;
-          #     withRapidocr = true;
-          #   };
-          # };
+          docling-serve = {
+            enable = true;
+            port = 5001;
+            package = pkgs.master.docling-serve.override {
+              withUI = true;
+              withTesserocr = true;
+              withCPU = true;
+              withRapidocr = true;
+            };
+          };
         };
       };
     };

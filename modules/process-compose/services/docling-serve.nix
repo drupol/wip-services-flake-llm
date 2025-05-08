@@ -1,16 +1,22 @@
 {
-  lib,
-  name,
-  pkgs,
+  inputs,
   config,
   ...
 }:
-let
-  inherit (lib) types;
-in
 {
-  flake.process-compose.docling-serve = {
-    options = {
+  flake.processComposeModules.docling-serve = { config, pkgs, lib, ... }: 
+  let
+    inherit (lib) types;
+    cfg = config.services.docling-serve;
+  in
+  {
+    options.services.docling-serve = {
+      enable = lib.mkEnableOption "Enable docling-serve";
+      dataDir = lib.mkOption {
+        type = types.str;
+        default = "./data/docling-serve";
+        description = "The directory where all data for `docling-serve` is stored";
+      }; 
       package = lib.mkPackageOption pkgs "docling-serve" { };
 
       host = lib.mkOption {
@@ -27,33 +33,27 @@ in
       };
     };
 
-    config = {
-      outputs = {
-        settings = {
-          environment = {
-            HF_HOME = "${config.dataDir}";
-            EASYOCR_MODULE_PATH = "${config.dataDir}";
-            MPLCONFIGDIR = "${config.dataDir}";
-            DOCLING_SERVE_ENABLE_UI = "true";
+    config.settings.processes = {
+      "docling-serve" = {
+        command = "${lib.getExe cfg.package} run --host ${cfg.host} --port ${toString cfg.port}";
+        environment = {
+          HF_HOME = "${cfg.dataDir}";
+          EASYOCR_MODULE_PATH = "${cfg.dataDir}";
+          MPLCONFIGDIR = "${cfg.dataDir}";
+          DOCLING_SERVE_ENABLE_UI = "true";
+        };
+        availability.restart = "on_failure";
+        readiness_probe = {
+          http_get = {
+            host = cfg.host;
+            port = cfg.port;
+            path = "/ui";
           };
-          processes = {
-            "${name}" = {
-              command = "${lib.getExe config.package} run --host ${config.host} --port ${toString config.port}";
-              availability.restart = "on_failure";
-              readiness_probe = {
-                http_get = {
-                  host = config.host;
-                  port = config.port;
-                  path = "/ui";
-                };
-                initial_delay_seconds = 2;
-                period_seconds = 10;
-                timeout_seconds = 4;
-                success_threshold = 1;
-                failure_threshold = 5;
-              };
-            };
-          };
+          initial_delay_seconds = 2;
+          period_seconds = 10;
+          timeout_seconds = 4;
+          success_threshold = 1;
+          failure_threshold = 5;
         };
       };
     };

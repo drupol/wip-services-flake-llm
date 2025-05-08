@@ -1,16 +1,15 @@
 {
   inputs,
-  config,
   ...
 }:
 {
+  imports = [ inputs.process-compose-flake.flakeModule ];
   perSystem =
     { pkgs, ... }:
     {
       process-compose."ai-services" = pc: {
         imports = [
           inputs.services-flake.processComposeModules.default
-          config.flake.processComposeModules.default
         ];
 
         services = {
