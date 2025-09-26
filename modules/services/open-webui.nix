@@ -4,7 +4,7 @@
 }:
 {
   imports = [ inputs.process-compose-flake.flakeModule ];
-  
+
   perSystem =
     { pkgs, ... }:
     {
@@ -16,7 +16,11 @@
         services = {
           open-webui."open-webui1" = {
             enable = true;
-            package = pkgs.open-webui;
+            package = pkgs.open-webui.overridePythonAttrs (oldAttrs: {
+              dependencies = oldAttrs.dependencies ++ [
+                pkgs.python3Packages.itsdangerous
+              ];
+            });
             environment =
               let
                 ollamaHost = pc.config.services.ollama.ollama1.host;
