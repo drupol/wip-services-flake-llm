@@ -31,6 +31,10 @@
                 tikaPort = pc.config.services.tika.tika1.port;
               in
               {
+                STATIC_DIR = "${pc.config.services.open-webui.open-webui1.dataDir}/static";
+                DATA_DIR = "${pc.config.services.open-webui.open-webui1.dataDir}/data";
+                HF_HOME = "${pc.config.services.open-webui.open-webui1.dataDir}/hf_home";
+                SENTENCE_TRANSFORMERS_HOME = "${pc.config.services.open-webui.open-webui1.dataDir}/transformers_home";
                 WEBUI_AUTH = "False";
                 ENABLE_OLLAMA_API = "True";
                 OLLAMA_BASE_URL = "http://${ollamaHost}:${toString ollamaPort}";
