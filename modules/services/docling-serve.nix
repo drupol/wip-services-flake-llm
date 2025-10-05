@@ -21,7 +21,7 @@
           docling-serve = {
             enable = true;
             port = 5001;
-            package = pkgs.master.docling-serve.override {
+            package = pkgs.docling-serve.override {
               withUI = true;
               withTesserocr = true;
               withCPU = true;
