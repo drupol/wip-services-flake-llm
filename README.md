@@ -6,7 +6,6 @@ Provides a local environment for running several AI-related and document-process
 - [Ollama] — local LLM inference
 - [Tika] — document text extraction
 - [Searxng] — privacy-respecting metasearch engine
-- [Docling-Serve] — structured document parsing and API
 
 All services are orchestrated via [`process-compose`], **no containers are used**.
 Service data and configuration are stored in the directory from which you run the command.
@@ -31,7 +30,6 @@ Service data and configuration are stored in the directory from which you run th
    | Ollama        | [http://localhost:11434](http://localhost:11434)                                  |
    | Tika          | [http://localhost:9998](http://localhost:9998)                                    |
    | Searxng       | [http://localhost:8080](http://localhost:8080)                                    |
-   | Docling-Serve | [http://localhost:5001/](http://localhost:5001/) — [UI](http://localhost:5001/ui) |
 
 ---
 
@@ -46,6 +44,5 @@ Service data and configuration are stored in the directory from which you run th
 [Tika]: https://tika.apache.org/
 [Searxng]: https://github.com/searxng/searxng
 [Open-WebUI]: https://github.com/open-webui/open-webui
-[Docling-Serve]: https://github.com/docling-project/docling-serve
 [Nix flake]: https://wiki.nixos.org/wiki/Flakes
 [tags page]: https://github.com/drupol/wip-services-flake-llm/tags
